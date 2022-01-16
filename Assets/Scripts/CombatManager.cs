@@ -104,31 +104,31 @@ public class CombatManager : MonoBehaviour {
         Debug.Log($"Ally speed: {allySpeed} | Enemy speed: {enemySpeed}");
         
         //  Ally / enemy turn order is based on speed
-        if (allySpeed > enemySpeed) {
-            ally.TakeTurn(positionCounter);
-            
-            EvaluateRound();
-            
-            if (!enemy.IsDead()) {
-                enemy.TakeTurn(positionCounter);
-            }
-        }
-        else if (allySpeed == enemySpeed){
-            //  Take turns simultaneous
-            ally.TakeTurn(positionCounter);
-            enemy.TakeTurn(positionCounter);
-        }
-        else {
-            enemy.TakeTurn(positionCounter);
-            
-            EvaluateRound();
-            
-            if (!ally.IsDead()) {
-                ally.TakeTurn(positionCounter);
-            }
-        }
-        
-        EvaluateRound();
+        // if (allySpeed > enemySpeed) {
+        //     ally.TakeTurn(positionCounter);
+        //     
+        //     EvaluateRound();
+        //     
+        //     if (!enemy.IsDead()) {
+        //         enemy.TakeTurn(positionCounter);
+        //     }
+        // }
+        // else if (allySpeed == enemySpeed){
+        //     //  Take turns simultaneous
+        //     ally.TakeTurn(positionCounter);
+        //     enemy.TakeTurn(positionCounter);
+        // }
+        // else {
+        //     enemy.TakeTurn(positionCounter);
+        //     
+        //     EvaluateRound();
+        //     
+        //     if (!ally.IsDead()) {
+        //         ally.TakeTurn(positionCounter);
+        //     }
+        // }
+        //
+        // EvaluateRound();
     }
 
     private void EvaluateRound() {
