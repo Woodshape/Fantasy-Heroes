@@ -67,11 +67,19 @@ public class CombatManager : MonoBehaviour {
         }
     }
     
-    private void AddAlly(int pos, Ally ally) {
-        Debug.Log($"Adding ally at position {pos}: {ally}");
-        allies.Add(pos, ally);
+    private void AddAlly(int pos, Ally allyToAdd) {
+        Debug.Log($"Adding ally at position {pos}: {allyToAdd}");
+
+        Ally ally = Instantiate(allyToAdd, allyPositions[pos - 1].transform.position, Quaternion.identity);
         
-        Instantiate(ally, allyPositions[pos - 1].transform.position, Quaternion.identity);
+        //  FIXME
+        ally.RandomizeStats();
+        
+        Human human = ally.gameObject.AddComponent<Human>();
+        ally.SetRace(human);
+        
+
+        allies.Add(pos, ally);
 
         ally.HealthChangedEvent += OnHealthChanged;
     }
@@ -81,11 +89,15 @@ public class CombatManager : MonoBehaviour {
         ally.Die();
     }
     
-    private void AddEnemy(int pos, Enemy enemy) {
-        Debug.Log($"Adding enemy at position {pos}: {enemy}");
-        enemies.Add(pos, enemy);
+    private void AddEnemy(int pos, Enemy enemyToAdd) {
+        Debug.Log($"Adding enemy at position {pos}: {enemyToAdd}");
 
-        Instantiate(enemy, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
+        Enemy enemy = Instantiate(enemyToAdd, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
+        
+        //  FIXME
+        enemy.RandomizeStats();
+        
+        enemies.Add(pos, enemy);
 
         enemy.HealthChangedEvent += OnHealthChanged;
     }

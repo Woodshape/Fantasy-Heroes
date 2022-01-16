@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 
 public class Ally : Character {
-    public GameObject Race;
-    public GameObject Class;
-    public GameObject Weapon;
+    public Race Race;
+    public Class Class;
+    public Weapon Weapon;
 
     public override void TakeTurn(int position) {
         base.TakeTurn(position);
-        Debug.Log("ALLY TURN");
+        Debug.Log("ALLY TURN", this);
         
         Attack();
+    }
+    
+    public void SetRace(Race race) {
+        if (Race != null) {
+            Race.RemovePassive();
+        }
+        
+        Race = race;
+
+        if (Race != null) {
+            Race.ApplyPassive();
+        }
     }
 
     private void Attack() {

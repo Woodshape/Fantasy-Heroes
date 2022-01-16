@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Character : MonoBehaviour {
     public string Name;
@@ -21,6 +22,12 @@ public class Character : MonoBehaviour {
         Debug.Log($"Taking turn at position {position}: {this}", this);
         Debug.Log("Front ally: " + CombatManager.Instance.GetFrontAlly(), this);
         Debug.Log("Front enemy: " + CombatManager.Instance.GetFrontEnemy(), this);
+    }
+    
+    public void RandomizeStats() {
+        Power = Random.Range(1, 4);
+        Speed = Random.Range(1, 4);
+        Health = Random.Range(1, 4);
     }
 
     public void TakeDamage(int amount) {

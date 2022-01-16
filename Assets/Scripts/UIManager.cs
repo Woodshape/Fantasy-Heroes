@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
-{
-    public TMP_Text allyInformation;
-    public TMP_Text enemyInformation;
-
+public class UIManager : MonoBehaviour {
+    
     void Start()
     {
         CombatManager.Instance.RoundOverEvent += OnRoundOver;
@@ -20,17 +17,18 @@ public class UIManager : MonoBehaviour
     }
     
     private void RefreshInformation() {
-        if (allyInformation != null) {
-            allyInformation.text = "";
-            foreach (Ally ally in CombatManager.Instance.GetAllies()) {
-                allyInformation.text += ally + "\n";
-            }
+        foreach (Ally ally in CombatManager.Instance.GetAllies()) {
+            TMP_Text text = ally.gameObject.GetComponentInChildren<TMP_Text>();
+            text.text = GetStatusValues(ally);
         }
-        if (enemyInformation != null) {
-            enemyInformation.text = "";
-            foreach (Enemy enemy in CombatManager.Instance.GetEnemies()) {
-                enemyInformation.text += enemy + "\n";
-            }
+        
+        foreach (Enemy enemy in CombatManager.Instance.GetEnemies()) {
+            TMP_Text text = enemy.gameObject.GetComponentInChildren<TMP_Text>();
+            text.text = GetStatusValues(enemy);
         }
+    }
+
+    private string GetStatusValues(Character character) {
+        return $"{character.Power}|{character.Speed}|{character.Health}";
     }
 }
