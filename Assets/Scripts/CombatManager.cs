@@ -10,13 +10,18 @@ public class CombatManager : MonoBehaviour {
 
     public GameObject[] startingAllies;
     public GameObject[] startingEnemies;
+
+    public List<GameObject> allyPositions = new List<GameObject>();
+    public List<GameObject> enemyPositions = new List<GameObject>();
     
     private Dictionary<int, Ally> allies = new Dictionary<int, Ally>();
     private Dictionary<int, Enemy> enemies = new Dictionary<int, Enemy>();
     
     [SerializeField]
-    private int positions = 6;
-    private int positionCounter = 0;
+    // private int positions = 6;
+    private int positionCounter;
+    private int allyPosition;
+    private int enemyPosition;
     
     [SerializeField]
     private float turnTime = 1;
@@ -28,7 +33,7 @@ public class CombatManager : MonoBehaviour {
 
     private bool combatOver;
     
-    public event EventHandler RoundOver;
+    public event EventHandler RoundOverEvent;
 
     private void Awake() {
         if (Instance == null) {
@@ -37,26 +42,62 @@ public class CombatManager : MonoBehaviour {
         
         for (int i = 0; i < startingAllies.Length; i++) {
             int pos = i + 1;
-            if (pos <= positions) {
+            if (pos <= allyPositions.Count) {
                 Ally ally = startingAllies[i].GetComponent<Ally>();
                 if (ally != null) {
-                    Debug.Log($"Adding ally at position {pos}: {ally}");
-                    allies.Add(pos, ally);
+                    AddAlly(pos, ally);
                 }
                 else {
                     Debug.LogWarning("No ally on GameObject: " + startingAllies[i]);
                 }
-                
+            }
+        }
+        
+        for (int i = 0; i < startingEnemies.Length; i++) {
+            int pos = i + 1;
+            if (pos <= enemyPositions.Count) {
                 Enemy enemy = startingEnemies[i].GetComponent<Enemy>();
                 if (enemy != null) {
-                    Debug.Log($"Adding ally at position {pos}: {enemy}");
-                    enemies.Add(pos, enemy);
+                    AddEnemy(pos, enemy);
                 }
                 else {
                     Debug.LogWarning("No enemy on GameObject: " + startingEnemies[i]);
                 }
             }
         }
+    }
+    
+    private void AddAlly(int pos, Ally ally) {
+        Debug.Log($"Adding ally at position {pos}: {ally}");
+        allies.Add(pos, ally);
+        
+        Instantiate(ally, allyPositions[pos - 1].transform.position, Quaternion.identity);
+
+        ally.HealthChangedEvent += OnHealthChanged;
+    }
+
+    private void RemoveAlly(Ally ally) {
+        ally.HealthChangedEvent -= OnHealthChanged;
+        ally.Die();
+    }
+    
+    private void AddEnemy(int pos, Enemy enemy) {
+        Debug.Log($"Adding enemy at position {pos}: {enemy}");
+        enemies.Add(pos, enemy);
+
+        Instantiate(enemy, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
+
+        enemy.HealthChangedEvent += OnHealthChanged;
+    }
+    
+    private void RemoveEnemy(Enemy enemy) {
+        enemy.HealthChangedEvent -= OnHealthChanged;
+        enemy.Die();
+    }
+    
+    private void OnHealthChanged(object sender, EventArgs e) {
+        Character character = (Character) sender;
+        Debug.Log($"Health changed for {character.Name}: {character.Health}");
     }
 
     // Update is called once per frame
@@ -70,39 +111,52 @@ public class CombatManager : MonoBehaviour {
             if (turnTimer >= turnTime) {
                 turnTimer = 0f;
 
-                NextTurn();
+                NextRound();
             }
         }
     }
     
     public Ally GetFrontAlly() {
-        var sorted = allies.OrderBy(kvp => kvp.Key).ToList();
-        return sorted[0].Value;
+        if (allies.Count > 0) {
+            var sorted = allies.OrderBy(kvp => kvp.Key).ToList();
+            return sorted[0].Value;
+        }
+
+        Debug.LogWarning("No allies");
+        return null;
     }
     
     public Enemy GetFrontEnemy() {
-        var sorted = enemies.OrderBy(kvp => kvp.Key).ToList();
-        return sorted[0].Value;
-    }
-    
-    private void NextTurn() {
-        turnNumber++;
-        positionCounter++;
-        if (positionCounter > positions) {
-            positionCounter = 1;
-
-            Debug.Log("Round finished...");
+        if (enemies.Count > 0) {
+            var sorted = enemies.OrderBy(kvp => kvp.Key).ToList();
+            return sorted[0].Value;
         }
         
-        Debug.Log($"Turn: {turnNumber} | Position: {positionCounter}");
-        // Character ally = GetActiveAlly(positionCounter);
-        // Character enemy = GetActiveEnemy(positionCounter);
+        Debug.LogWarning("No enemies");
+        return null;
+    }
+    
+    private void NextRound() {
+        turnNumber++;
+        allyPosition++;
+        if (allyPosition > allyPositions.Count) {
+            allyPosition = 1;
+        }
+        enemyPosition++;
+        if (enemyPosition > enemyPositions.Count) {
+            enemyPosition = 1;
+        }
+
+        Debug.Log($"Round: {turnNumber}");
+        
         Ally ally = GetFrontAlly();
         Enemy enemy = GetFrontEnemy();
 
         if (ally != null && enemy != null) {
             DetermineTurnOrder(ally, enemy);
         }
+        
+        DetermineWinner();
     }
 
     private void DetermineTurnOrder(Ally ally, Enemy enemy) {
@@ -113,77 +167,60 @@ public class CombatManager : MonoBehaviour {
         
         //  Ally / enemy turn order is based on speed
         if (allySpeed > enemySpeed) {
-            ally.TakeTurn(positionCounter);
-            
-            EvaluateRound();
-            
+            //  Ally acts first
+            ally.TakeTurn(allyPosition);
+
+            //  Enemy acts second, if still alive
             if (!enemy.IsDead()) {
-                enemy.TakeTurn(positionCounter);
+                enemy.TakeTurn(enemyPosition);
             }
         }
         else if (allySpeed == enemySpeed){
             //  Take turns simultaneous
-            ally.TakeTurn(positionCounter);
-            enemy.TakeTurn(positionCounter);
-            
-            EvaluateRound();
+            ally.TakeTurn(allyPosition);
+            enemy.TakeTurn(enemyPosition);
         }
         else {
-            enemy.TakeTurn(positionCounter);
+            //  Enemy acts first
+            enemy.TakeTurn(enemyPosition);
             
-            EvaluateRound();
-            
+            //  Ally acts second, if still alive
             if (!ally.IsDead()) {
-                ally.TakeTurn(positionCounter);
+                ally.TakeTurn(allyPosition);
             }
         }
         
         EvaluateTurn();
     }
 
-    private void EvaluateRound() {
-        foreach (var ally in allies) {
-            Ally al = ally.Value;
-            al.EvaluateHealth();
-        }
-        foreach (var enemy in enemies) {
-            Enemy en = enemy.Value;
-            en.EvaluateHealth();
-        }
-
-        OnRoundOver();
-    }
-
     private void EvaluateTurn() {
-        List<int> alliesToRemove = new List<int>();
+        List<KeyValuePair<int, Ally>> alliesToRemove = new List<KeyValuePair<int, Ally>>();
         foreach (var ally in allies) {
-            Ally al = ally.Value;
-            if (al.IsDead()) {
-                alliesToRemove.Add(ally.Key);
-                al.Die();
+            if (ally.Value.IsDead()) {
+                alliesToRemove.Add(ally);
+                
+                RemoveAlly(ally.Value);
             }
         }
 
-        foreach (int index in alliesToRemove) {
-            allies.Remove(index);
+        foreach (var ally in alliesToRemove) {
+            allies.Remove(ally.Key);
         }
 
-        List<int> enemiesToRemove = new List<int>();
+        List<KeyValuePair<int, Enemy>> enemiesToRemove = new List<KeyValuePair<int, Enemy>>();
         foreach (var enemy in enemies) {
-            Enemy en = enemy.Value;
-            if (en.IsDead()) {
-                enemiesToRemove.Add(enemy.Key);
-                en.Die();
+            if (enemy.Value.IsDead()) {
+                enemiesToRemove.Add(enemy);
+                
+                RemoveEnemy(enemy.Value);
             }
         }
         
-        foreach (int index in enemiesToRemove) {
-            enemies.Remove(index);
+        foreach (var enemy in enemiesToRemove) {
+            enemies.Remove(enemy.Key);
         }
         
         OnRoundOver();
-
-        DetermineWinner();
     }
     
     private void DetermineWinner() {
@@ -200,11 +237,11 @@ public class CombatManager : MonoBehaviour {
             combatOver = true;
         }
         else {
-            Debug.Log("No winner: New Round...");
+            Debug.Log("No winner: next round...");
         }
     }
 
-    private Ally GetActiveAlly(int position) {
+    private Ally GetAlly(int position) {
         bool allyForPosition = allies.TryGetValue(position, out Ally character);
         if (allyForPosition) {
             Debug.Log("Active Ally: " + character);
@@ -216,7 +253,7 @@ public class CombatManager : MonoBehaviour {
         return null;
     }
     
-    private Enemy GetActiveEnemy(int position) {
+    private Enemy GetEnemy(int position) {
         bool enemyForPosition = enemies.TryGetValue(position, out Enemy character);
         if (enemyForPosition) {
             Debug.Log("Active Enemy: " + character);
@@ -229,7 +266,7 @@ public class CombatManager : MonoBehaviour {
     }
     
     protected virtual void OnRoundOver() {
-        RoundOver?.Invoke(this, EventArgs.Empty);
+        RoundOverEvent?.Invoke(this, EventArgs.Empty);
     }
 
     public List<Ally> GetAllies() {

@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        CombatManager.Instance.RoundOver += OnRoundOver;
+        CombatManager.Instance.RoundOverEvent += OnRoundOver;
         RefreshInformation();
     }
 
