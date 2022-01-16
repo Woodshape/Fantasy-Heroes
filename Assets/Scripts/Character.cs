@@ -33,7 +33,7 @@ public class Character : MonoBehaviour {
         }
     }
 
-    private void Die() {
+    public void Die() {
         Debug.Log($"{Name} dies!");
         // CombatManager.Instance.Remove
     }
