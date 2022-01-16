@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class Character : MonoBehaviour {
 
     private bool isDead;
 
+    public event EventHandler HealthChangedEvent;
+
     public virtual void TakeTurn(int position) {
         Debug.Log($"Taking turn at position {position}: {this}", this);
         Debug.Log("Front ally: " + CombatManager.Instance.GetFrontAlly(), this);
@@ -23,19 +26,17 @@ public class Character : MonoBehaviour {
     public void TakeDamage(int amount) {
         Debug.Log($"{Name} taking {amount} damage!");
         Health -= amount;
-    }
 
-    public void EvaluateHealth() {
-        Debug.Log($"{Name} evaluating health: {Health}");
+        OnHealthChanged();
         
         if (Health <= 0) {
             isDead = true;
         }
     }
 
-    private void Die() {
+    public void Die() {
         Debug.Log($"{Name} dies!");
-        // CombatManager.Instance.Remove
+        Destroy(gameObject);
     }
 
     public bool IsDead() {
@@ -44,5 +45,9 @@ public class Character : MonoBehaviour {
 
     public override string ToString() {
         return $"{Name} -> P:{Power} | S:{Speed} | H:{Health}";
+    }
+    
+    protected virtual void OnHealthChanged() {
+        HealthChangedEvent?.Invoke(this, EventArgs.Empty);
     }
 }
