@@ -43,7 +43,11 @@ public class CombatManager : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         }
-        
+
+        CreateBattle();
+    }
+    
+    private void CreateBattle() {
         for (int i = 0; i < startingAllies.Length; i++) {
             int pos = i + 1;
             if (pos <= allyPositions.Count) {
@@ -56,7 +60,7 @@ public class CombatManager : MonoBehaviour {
                 }
             }
         }
-        
+
         for (int i = 0; i < startingEnemies.Length; i++) {
             int pos = i + 1;
             if (pos <= enemyPositions.Count) {
@@ -70,11 +74,26 @@ public class CombatManager : MonoBehaviour {
             }
         }
     }
-    
-    // Update is called once per frame
+
+    private void ResetBattle() {
+        foreach (var ally in allies) {
+            RemoveAlly(ally.Value);
+        }
+        foreach (var enemy in enemies) {
+            RemoveEnemy(enemy.Value);
+        }
+        
+        allies.Clear();
+        enemies.Clear();
+    }
+
     void Update() {
         if (combatOver) {
-            return;
+            Debug.Log("RESTARTING COMBAT");
+            ResetBattle();
+            CreateBattle();
+            combatOver = false;
+            OnRoundOver();
         }
         
         if (autoTurn) {
@@ -97,14 +116,14 @@ public class CombatManager : MonoBehaviour {
     }
 
     public void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
-        if (defender.CanReact(true)) {
+        if (defender.CanReact(TriggerType.BeforeAttack)) {
             defender.Reaction.EnableTrigger(attacker);
         }
         
         Debug.Log($"ATTACK: Attacker {attacker} -> Defender {defender}", this);
-        defender.TakeDamage(attacker.Power, ignoreArmor);
+        defender.TakeDamage(attacker, attacker.Power, ignoreArmor);
         
-        if (defender.CanReact(false)) {
+        if (defender.CanReact(TriggerType.AfterAttack)) {
             defender.Reaction.EnableTrigger(attacker);
         }
 
@@ -119,6 +138,7 @@ public class CombatManager : MonoBehaviour {
         Ally ally = Instantiate(allyToAdd, allyPositions[pos - 1].transform.position, Quaternion.identity);
         
         SetupAlly(ally);
+        ally.Name += " " + pos;
 
         allies.Add(pos, ally);
 
@@ -151,6 +171,7 @@ public class CombatManager : MonoBehaviour {
         Enemy enemy = Instantiate(enemyToAdd, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
         
         SetupEnemy(enemy);
+        enemy.Name += " " + pos;
         
         enemies.Add(pos, enemy);
 

@@ -7,10 +7,13 @@ namespace Data.Races {
             base.Setup();
 
             Name = "Human";
+            Description = "I AM HUMAN!!!";
+
+            Debug.Log($"{Name}: {Description}");
         }
 
         public override void EnablePassive() {
-            Debug.Log("I AM HUMAN!!!", this);
+            Debug.Log($"Enabling {Name} passive", this);
 
             character.Power += 1;
             character.Speed += 1;
@@ -18,7 +21,7 @@ namespace Data.Races {
         }
 
         public override void DisablePassive() {
-            Debug.Log("THE HUMANITIES...", this);
+            Debug.Log($"Disabling {Name} passive", this);
 
             character.Power -= 1;
             character.Speed -= 1;

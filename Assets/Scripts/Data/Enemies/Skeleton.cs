@@ -16,22 +16,22 @@ namespace Data.Enemies {
             public SkeletonReaction(Enemy enemy) {
                 this.enemy = enemy;
             }
+
+            public string GetDescription() {
+                return "Deals 1 damage to attacker on death.";
+            }
             
-            public bool BeforeAttack() {
-                return true;
+            public TriggerType GetTriggerType() {
+                return TriggerType.OnDeath;
             }
             
             public void EnableTrigger(Character trigger) {
-                Debug.Log("SKELLIES ARE HARD");
+                Debug.Log(GetDescription(), enemy);
 
-                enemy.Armor += 1;
+                trigger.TakeDamage(enemy, 1, true);
             }
             
-            public void DisableTrigger() {
-                Debug.Log("SKELLIES ARE NO LONGER HARD...");
-
-                enemy.Armor -= 1;
-            }
+            public void DisableTrigger() { }
         }
     }
 }
