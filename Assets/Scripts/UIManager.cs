@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Data;
+using Data.Enemies;
 using TMPro;
 using UnityEngine;
 
@@ -18,17 +20,13 @@ public class UIManager : MonoBehaviour {
     
     private void RefreshInformation() {
         foreach (Ally ally in CombatManager.Instance.GetAllies()) {
-            TMP_Text text = ally.gameObject.GetComponentInChildren<TMP_Text>();
-            text.text = GetStatusValues(ally);
+            StatDisplay statDisplay = ally.gameObject.GetComponentInChildren<StatDisplay>();
+            statDisplay.DisplayStatusValues(ally);
         }
         
         foreach (Enemy enemy in CombatManager.Instance.GetEnemies()) {
-            TMP_Text text = enemy.gameObject.GetComponentInChildren<TMP_Text>();
-            text.text = GetStatusValues(enemy);
+            StatDisplay statDisplay = enemy.gameObject.GetComponentInChildren<StatDisplay>();
+            statDisplay.DisplayStatusValues(enemy);
         }
-    }
-
-    private string GetStatusValues(Character character) {
-        return $"{character.Power}|{character.Speed}|{character.Health}";
     }
 }

@@ -2,6 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
+using Data.Classes;
+using Data.Enemies;
+using Data.Races;
 using TMPro;
 using UnityEngine;
 
@@ -67,51 +71,6 @@ public class CombatManager : MonoBehaviour {
         }
     }
     
-    private void AddAlly(int pos, Ally allyToAdd) {
-        Debug.Log($"Adding ally at position {pos}: {allyToAdd}");
-
-        Ally ally = Instantiate(allyToAdd, allyPositions[pos - 1].transform.position, Quaternion.identity);
-        
-        //  FIXME
-        ally.RandomizeStats();
-        
-        Human human = ally.gameObject.AddComponent<Human>();
-        ally.SetRace(human);
-        
-
-        allies.Add(pos, ally);
-
-        ally.HealthChangedEvent += OnHealthChanged;
-    }
-
-    private void RemoveAlly(Ally ally) {
-        ally.HealthChangedEvent -= OnHealthChanged;
-        ally.Die();
-    }
-    
-    private void AddEnemy(int pos, Enemy enemyToAdd) {
-        Debug.Log($"Adding enemy at position {pos}: {enemyToAdd}");
-
-        Enemy enemy = Instantiate(enemyToAdd, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
-        
-        //  FIXME
-        enemy.RandomizeStats();
-        
-        enemies.Add(pos, enemy);
-
-        enemy.HealthChangedEvent += OnHealthChanged;
-    }
-    
-    private void RemoveEnemy(Enemy enemy) {
-        enemy.HealthChangedEvent -= OnHealthChanged;
-        enemy.Die();
-    }
-    
-    private void OnHealthChanged(object sender, EventArgs e) {
-        Character character = (Character) sender;
-        Debug.Log($"Health changed for {character.Name}: {character.Health}");
-    }
-
     // Update is called once per frame
     void Update() {
         if (combatOver) {
@@ -128,6 +87,93 @@ public class CombatManager : MonoBehaviour {
         }
     }
     
+    public void PerformAttack(Character attacker) {
+        if (attacker is Ally) {
+            PerformAttack(attacker, GetFrontEnemy());
+        }
+        else {
+            PerformAttack(attacker, GetFrontAlly());
+        }
+    }
+
+    public void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
+        if (defender.CanReact(true)) {
+            defender.Reaction.EnableTrigger(attacker);
+        }
+        
+        Debug.Log($"ATTACK: Attacker {attacker} -> Defender {defender}", this);
+        defender.TakeDamage(attacker.Power, ignoreArmor);
+        
+        if (defender.CanReact(false)) {
+            defender.Reaction.EnableTrigger(attacker);
+        }
+
+        if (defender.Reaction != null) {
+            defender.Reaction.DisableTrigger();
+        }
+    }
+    
+    public void AddAlly(int pos, Ally allyToAdd) {
+        Debug.Log($"Adding ally at position {pos}: {allyToAdd}");
+
+        Ally ally = Instantiate(allyToAdd, allyPositions[pos - 1].transform.position, Quaternion.identity);
+        
+        SetupAlly(ally);
+
+        allies.Add(pos, ally);
+
+        ally.HealthChangedEvent += OnHealthChanged;
+    }
+
+    public void RemoveAlly(Ally ally) {
+        ally.HealthChangedEvent -= OnHealthChanged;
+        ally.Die();
+    }
+    
+    private static void SetupAlly(Ally ally) {
+        ally.Setup();
+        
+        //  FIXME
+        ally.RandomizeStats();
+
+        Human human = ally.gameObject.AddComponent<Human>();
+        human.Setup();
+        ally.SetRace(human);
+        
+        Warrior warrior = ally.gameObject.AddComponent<Warrior>();
+        warrior.Setup();
+        ally.SetClass(warrior);
+    }
+    
+    public void AddEnemy(int pos, Enemy enemyToAdd) {
+        Debug.Log($"Adding enemy at position {pos}: {enemyToAdd}");
+
+        Enemy enemy = Instantiate(enemyToAdd, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
+        
+        SetupEnemy(enemy);
+        
+        enemies.Add(pos, enemy);
+
+        enemy.HealthChangedEvent += OnHealthChanged;
+    }
+    
+    public void RemoveEnemy(Enemy enemy) {
+        enemy.HealthChangedEvent -= OnHealthChanged;
+        enemy.Die();
+    }
+    
+    private static void SetupEnemy(Enemy enemy) {
+        enemy.Setup();
+        
+        //  FIXME
+        enemy.RandomizeStats();
+    }
+    
+    private void OnHealthChanged(object sender, EventArgs e) {
+        Character character = (Character) sender;
+        Debug.Log($"Health changed for {character.Name}: {character.Health}");
+    }
+
     public Ally GetFrontAlly() {
         if (allies.Count > 0) {
             var sorted = allies.OrderBy(kvp => kvp.Key).ToList();

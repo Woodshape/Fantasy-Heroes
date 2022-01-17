@@ -458,9 +458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 651a0002cd6394f4d82f82e002e7ed21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  information: {fileID: 0}
-  allyInformation: {fileID: 1327322750}
-  enemyInformation: {fileID: 746773771}
 --- !u!4 &715333284
 Transform:
   m_ObjectHideFlags: 0
