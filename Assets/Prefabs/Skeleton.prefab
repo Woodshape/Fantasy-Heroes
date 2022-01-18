@@ -91,3 +91,5 @@ MonoBehaviour:
   DamagePopup: {fileID: 5993777662222586322, guid: a747bec1956ccd54f80cf98ae5cd9aa5, type: 3}
   Buffs: []
   Conditions: []
+  Abilities:
+  - {fileID: 11400000, guid: d6ece9aff665b6e4a8e9e006d09a4cb1, type: 2}

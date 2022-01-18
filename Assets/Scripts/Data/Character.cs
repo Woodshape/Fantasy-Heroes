@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Data;
+using Data.Abilities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,10 +18,12 @@ namespace Data {
     
         public List<GameObject> Buffs;
         public List<GameObject> Conditions;
-    
+
+        public List<Ability> Abilities;
         public IReaction Reaction;
     
         private bool isDead;
+        private bool isHurt;
     
         public event EventHandler HealthChangedEvent;
 
@@ -32,8 +33,10 @@ namespace Data {
             Debug.Log($"Taking turn at position {position}: {this}", this);
             Debug.Log("Front ally: " + CombatManager.Instance.GetFrontAlly(), this);
             Debug.Log("Front enemy: " + CombatManager.Instance.GetFrontEnemy(), this);
+            
+            isHurt = false;
         }
-        
+
         public void RandomizeStats() {
             Power = Random.Range(1, 4);
             Speed = Random.Range(1, 4);
@@ -54,27 +57,26 @@ namespace Data {
     
             Health -= damage;
 
+            if (Health <= 0) {
+                isDead = true;
+            }
+            else {
+                isHurt = true;
+            }
+            
             DamagePopup damagePopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
             damagePopup.Setup(damage);
 
             OnHealthChanged();
-            
-            if (Health <= 0) {
-                if (!isDead && CanReact(TriggerType.OnDeath)) {
-                    Reaction.EnableTrigger(source);
-                }
-                isDead = true;
-            }
-            else {
-                if (CanReact(TriggerType.OnHurt) && damage > 0) {
-                    Reaction.EnableTrigger(source);
-                }
-            }
         }
     
         public void Die() {
             Debug.Log($"{Name} dies!", this);
             Destroy(gameObject);
+        }
+
+        public bool IsHurt() {
+            return isHurt;
         }
     
         public bool IsDead() {

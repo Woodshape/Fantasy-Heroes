@@ -135,6 +135,8 @@ MonoBehaviour:
   DamagePopup: {fileID: 5993777662222586322, guid: a747bec1956ccd54f80cf98ae5cd9aa5, type: 3}
   Buffs: []
   Conditions: []
+  Abilities:
+  - {fileID: 11400000, guid: 4e092fc9a89479b40ae03618afa576b6, type: 2}
   Race: {fileID: 0}
   Class: {fileID: 0}
   Weapon: {fileID: 0}

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Data.Abilities;
 using Data.Classes;
 using Data.Enemies;
 using Data.Races;
@@ -107,29 +108,34 @@ public class CombatManager : MonoBehaviour {
     }
     
     public void PerformAttack(Character attacker) {
-        if (attacker is Ally) {
-            PerformAttack(attacker, GetFrontEnemy());
+        //  Perform active abilities
+        CheckAbilities(attacker, AbilityType.Active);
+        
+        //  Default attack
+        switch (attacker) {
+            case Ally _:
+                PerformAttack(attacker, GetFrontEnemy());
+                break;
+            case Enemy _:
+                PerformAttack(attacker, GetFrontAlly());
+                break;
         }
-        else {
-            PerformAttack(attacker, GetFrontAlly());
+    }
+    
+    private void CheckAbilities(Character character, AbilityType abilityType) {
+        foreach (var ability in character.Abilities) {
+            if (ability.Type == abilityType) {
+                ability.TryUse(character);
+            }
         }
     }
 
-    public void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
-        if (defender.CanReact(TriggerType.BeforeAttack)) {
-            defender.Reaction.EnableTrigger(attacker);
-        }
-        
+    private void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
         Debug.Log($"ATTACK: Attacker {attacker} -> Defender {defender}", this);
         defender.TakeDamage(attacker, attacker.Power, ignoreArmor);
         
-        if (defender.CanReact(TriggerType.AfterAttack)) {
-            defender.Reaction.EnableTrigger(attacker);
-        }
-
-        if (defender.Reaction != null) {
-            defender.Reaction.DisableTrigger();
-        }
+        //  Perform reactive abilities
+        CheckAbilities(defender, AbilityType.Reactive);
     }
     
     public void AddAlly(int pos, Ally allyToAdd) {
