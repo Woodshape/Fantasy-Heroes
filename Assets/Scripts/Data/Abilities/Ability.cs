@@ -10,9 +10,11 @@ namespace Data.Abilities {
         [SerializeField]
         private TargetStrategy targetStrategy;
         [SerializeField]
+        private FilterStrategy filterStrategy;
+        [SerializeField]
         private TriggerStrategy triggerStrategy;
 
-        public void TryUse(Character user) {
+        public virtual void Activate(Character user) {
             this.user = user;
 
             if (triggerStrategy != null && !triggerStrategy.Check(user)) {
@@ -21,9 +23,11 @@ namespace Data.Abilities {
             }
             
             if (targetStrategy != null) {
-                targetStrategy.Target(user, Use);
+                targetStrategy.Target(user, filterStrategy, Use);
             }
         }
+        
+        public virtual void Deactivate(Character user) {}
 
         protected abstract void Use(IEnumerable<Character> targets);
     }

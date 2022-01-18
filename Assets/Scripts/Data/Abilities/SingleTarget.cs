@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Data.Enemies;
 using UnityEngine;
 
-namespace Data {
+namespace Data.Abilities {
     [CreateAssetMenu(fileName = "SingleTarget", menuName = "Target/SingleTarget")]
     public class SingleTarget : TargetStrategy {
-        public override void Target(Character user, Action<IEnumerable<Character>> finished) {
+        public override void Target(Character user, FilterStrategy filter, Action<IEnumerable<Character>> finished) {
             List<Character> targets = new List<Character>();
             switch (user) {
                 case Ally _:

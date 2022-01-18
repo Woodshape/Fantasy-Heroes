@@ -125,7 +125,7 @@ public class CombatManager : MonoBehaviour {
     private void CheckAbilities(Character character, AbilityType abilityType) {
         foreach (var ability in character.Abilities) {
             if (ability.Type == abilityType) {
-                ability.TryUse(character);
+                ability.Activate(character);
             }
         }
     }
@@ -156,19 +156,21 @@ public class CombatManager : MonoBehaviour {
         ally.Die();
     }
     
-    private static void SetupAlly(Ally ally) {
+    private void SetupAlly(Ally ally) {
         ally.Setup();
         
         //  FIXME
         ally.RandomizeStats();
-
-        Human human = ally.gameObject.AddComponent<Human>();
-        human.Setup();
-        ally.SetRace(human);
         
-        Warrior warrior = ally.gameObject.AddComponent<Warrior>();
-        warrior.Setup();
-        ally.SetClass(warrior);
+        CheckAbilities(ally, AbilityType.Passive);
+
+        // Human human = ally.gameObject.AddComponent<Human>();
+        // human.Setup();
+        // ally.SetRace(human);
+        //
+        // Warrior warrior = ally.gameObject.AddComponent<Warrior>();
+        // warrior.Setup();
+        // ally.SetClass(warrior);
     }
     
     public void AddEnemy(int pos, Enemy enemyToAdd) {
@@ -189,7 +191,7 @@ public class CombatManager : MonoBehaviour {
         enemy.Die();
     }
     
-    private static void SetupEnemy(Enemy enemy) {
+    private void SetupEnemy(Enemy enemy) {
         enemy.Setup();
         
         //  FIXME
