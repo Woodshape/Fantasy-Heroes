@@ -11,7 +11,14 @@ namespace Data {
         public string Name;
 
         public BaseStats Stats;
-        
+
+        [SerializeField]
+        private int startingPower = 1;
+        [SerializeField]
+        private int startingSpeed = 1;
+        [SerializeField]
+        private int startingHealth = 1;
+
         public int Power;
         public int Health;
         public int Speed;
@@ -33,7 +40,7 @@ namespace Data {
         public virtual void Setup() {
             //  Initialize base stat values
             Stats = GetComponent<BaseStats>();
-            Stats.Setup(1, 1, 1);
+            Stats.Setup(startingPower, startingSpeed, startingHealth);
 
             //  Initialize passive abilities
             CheckAbilities(AbilityType.Passive);
@@ -48,7 +55,9 @@ namespace Data {
             Debug.Log($"Taking turn at position {position}: {this}", this);
             Debug.Log("Front ally: " + CombatManager.Instance.GetFrontAlly(), this);
             Debug.Log("Front enemy: " + CombatManager.Instance.GetFrontEnemy(), this);
+        }
 
+        public virtual void AfterTurn() {
             AttackInformation = null;
         }
 
@@ -80,13 +89,15 @@ namespace Data {
     
             Health -= damage;
 
+            AttackInformation = new AttackInformation(source);
+
             if (Health <= 0) {
                 Debug.Log($"{Name} dies!", this);
-                AttackInformation = new AttackInformation(source){IsDead = true};
+                AttackInformation.IsDead = true;
             }
             else {
                 Debug.Log($"{Name} is hurt!", this);
-                AttackInformation = new AttackInformation(source){IsHurt = true};
+                AttackInformation.IsHurt = true;
             }
             
             DamagePopup damagePopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);

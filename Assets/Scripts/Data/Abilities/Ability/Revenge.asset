@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Revenge
   m_EditorClassIdentifier: 
   Name: Deathly Revenge
-  Description: Deals 1 damage to all allies on death.
+  Description: Deals 1 damage to attacker on death.
   Type: 1
-  targetStrategy: {fileID: 11400000, guid: 10d5da3c84ec3c943a167ca5d275d001, type: 2}
-  filterStrategy: {fileID: 11400000, guid: b317385dca2831f4dbc89781c6dbb46b, type: 2}
+  targetStrategy: {fileID: 11400000, guid: 6fbd1d0483b1f6d4cb8b2d853317710e, type: 2}
+  filterStrategy: {fileID: 0}
   triggerStrategy: {fileID: 11400000, guid: d01193e9889f2964a9a6d05f4de2b405, type: 2}
   Damage: 1
   IgnoreArmor: 1

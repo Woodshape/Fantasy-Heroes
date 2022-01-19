@@ -189,7 +189,7 @@ public class CombatManager : MonoBehaviour {
         enemy.Setup();
         
         //  FIXME
-        enemy.RandomizeStats();
+        // enemy.RandomizeStats();
     }
     
     private void OnHealthChanged(object sender, EventArgs e) {
@@ -282,6 +282,8 @@ public class CombatManager : MonoBehaviour {
                 
                 RemoveAlly(ally.Value);
             }
+            
+            ally.Value.AfterTurn();
         }
 
         foreach (var ally in alliesToRemove) {
@@ -295,6 +297,8 @@ public class CombatManager : MonoBehaviour {
                 
                 RemoveEnemy(enemy.Value);
             }
+            
+            enemy.Value.AfterTurn();
         }
         
         foreach (var enemy in enemiesToRemove) {

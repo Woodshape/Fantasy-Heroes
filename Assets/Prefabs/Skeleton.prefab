@@ -84,6 +84,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Skeleton
+  Stats: {fileID: 0}
+  startingPower: 1
+  startingSpeed: 2
+  startingHealth: 1
   Power: 1
   Health: 1
   Speed: 1

@@ -130,6 +130,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Ally
   Stats: {fileID: 0}
+  startingPower: 1
+  startingSpeed: 1
+  startingHealth: 1
   Power: 1
   Health: 1
   Speed: 1

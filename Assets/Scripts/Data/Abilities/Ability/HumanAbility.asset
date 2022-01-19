@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HumanAbility
   m_EditorClassIdentifier: 
   Name: Human Passive
-  Description: Humans are good at everything.
+  Description: Humans have higher starting stats.
   Type: 2
   targetStrategy: {fileID: 11400000, guid: 2ac54feb42612d54a97d9b0c73c4d29e, type: 2}
   filterStrategy: {fileID: 0}
