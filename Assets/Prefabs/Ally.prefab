@@ -92,6 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7379899086927879267}
   - component: {fileID: 7379899086927879264}
+  - component: {fileID: 1584359199230736255}
   m_Layer: 0
   m_Name: Ally
   m_TagString: Ally
@@ -128,6 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Ally
+  Stats: {fileID: 0}
   Power: 1
   Health: 1
   Speed: 1
@@ -136,10 +138,23 @@ MonoBehaviour:
   Buffs: []
   Conditions: []
   Abilities:
+  - {fileID: 11400000, guid: d9cadec2036fc3843aeb419d981084de, type: 2}
   - {fileID: 11400000, guid: 4e092fc9a89479b40ae03618afa576b6, type: 2}
   Race: {fileID: 0}
   Class: {fileID: 0}
   Weapon: {fileID: 0}
+--- !u!114 &1584359199230736255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7379899086927879277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6fde3c85c66408a8ddc1d5521237055, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6477392315685753889
 PrefabInstance:
   m_ObjectHideFlags: 0

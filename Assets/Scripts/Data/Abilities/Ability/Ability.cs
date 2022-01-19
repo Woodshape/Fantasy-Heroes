@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Data.Abilities {
     public abstract class Ability : ScriptableObject {
+        public string Name;
+        public string Description;
+        
         public AbilityType Type;
         
         protected Character user;
@@ -53,6 +56,10 @@ namespace Data.Abilities {
         public virtual void Deactivate(Character user) {}
 
         protected abstract void Use(IEnumerable<Character> targets);
+
+        public override string ToString() {
+            return $"{Name}: {Description}";
+        }
     }
 
     public enum AbilityType {

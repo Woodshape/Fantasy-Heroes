@@ -123,11 +123,7 @@ public class CombatManager : MonoBehaviour {
     }
     
     private void CheckAbilities(Character character, AbilityType abilityType) {
-        foreach (var ability in character.Abilities) {
-            if (ability.Type == abilityType) {
-                ability.Activate(character);
-            }
-        }
+        character.CheckAbilities(abilityType);
     }
 
     private void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
@@ -160,9 +156,7 @@ public class CombatManager : MonoBehaviour {
         ally.Setup();
         
         //  FIXME
-        ally.RandomizeStats();
-        
-        CheckAbilities(ally, AbilityType.Passive);
+        // ally.RandomizeStats();
 
         // Human human = ally.gameObject.AddComponent<Human>();
         // human.Setup();

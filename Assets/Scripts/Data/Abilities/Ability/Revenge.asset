@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d3b25dd62a141b293dd7654baac1872, type: 3}
   m_Name: Revenge
   m_EditorClassIdentifier: 
+  Name: Deathly Revenge
+  Description: Deals 1 damage to all allies on death.
   Type: 1
   targetStrategy: {fileID: 11400000, guid: 10d5da3c84ec3c943a167ca5d275d001, type: 2}
   filterStrategy: {fileID: 11400000, guid: b317385dca2831f4dbc89781c6dbb46b, type: 2}

@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using Data.Abilities;
+using Data.Buffs;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Data {
+    [RequireComponent(typeof(BaseStats))]
     public class Character : MonoBehaviour {
         public string Name;
+
+        public BaseStats Stats;
         
         public int Power;
         public int Health;
@@ -16,7 +20,7 @@ namespace Data {
 
         public DamagePopup DamagePopup;
     
-        public List<GameObject> Buffs;
+        public List<Buff> Buffs;
         public List<GameObject> Conditions;
 
         public List<Ability> Abilities;
@@ -26,7 +30,19 @@ namespace Data {
     
         public event EventHandler HealthChangedEvent;
 
-        public virtual void Setup(){}
+        public virtual void Setup() {
+            //  Initialize base stat values
+            Stats = GetComponent<BaseStats>();
+            Stats.Setup(1, 1, 1);
+
+            //  Initialize passive abilities
+            CheckAbilities(AbilityType.Passive);
+            
+            //  Set current stat values
+            Power = Stats.GetStat(Stat.Power);
+            Speed = Stats.GetStat(Stat.Speed);
+            Health = Stats.GetStat(Stat.Health);
+        }
     
         public virtual void TakeTurn(int position) {
             Debug.Log($"Taking turn at position {position}: {this}", this);
@@ -34,6 +50,14 @@ namespace Data {
             Debug.Log("Front enemy: " + CombatManager.Instance.GetFrontEnemy(), this);
 
             AttackInformation = null;
+        }
+
+        public void CheckAbilities(AbilityType abilityType) {
+            foreach (var ability in Abilities) {
+                if (ability.Type == abilityType) {
+                    ability.Activate(this);
+                }
+            }
         }
 
         public void RandomizeStats() {

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d3b25dd62a141b293dd7654baac1872, type: 3}
   m_Name: Bash
   m_EditorClassIdentifier: 
+  Name: Bash
+  Description: Deals 1 damage to enemy.
   Type: 0
   targetStrategy: {fileID: 11400000, guid: 6f55ebea609583d4ead5d46905594666, type: 2}
   filterStrategy: {fileID: 11400000, guid: 6938980aa4022354092f331bcc82ccd7, type: 2}
