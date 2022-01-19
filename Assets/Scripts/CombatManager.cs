@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Data.Abilities;
 using Data.Classes;
 using Data.Enemies;
 using Data.Races;
@@ -43,7 +44,11 @@ public class CombatManager : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         }
-        
+
+        CreateBattle();
+    }
+    
+    private void CreateBattle() {
         for (int i = 0; i < startingAllies.Length; i++) {
             int pos = i + 1;
             if (pos <= allyPositions.Count) {
@@ -56,7 +61,7 @@ public class CombatManager : MonoBehaviour {
                 }
             }
         }
-        
+
         for (int i = 0; i < startingEnemies.Length; i++) {
             int pos = i + 1;
             if (pos <= enemyPositions.Count) {
@@ -70,11 +75,26 @@ public class CombatManager : MonoBehaviour {
             }
         }
     }
-    
-    // Update is called once per frame
+
+    private void ResetBattle() {
+        foreach (var ally in allies) {
+            RemoveAlly(ally.Value);
+        }
+        foreach (var enemy in enemies) {
+            RemoveEnemy(enemy.Value);
+        }
+        
+        allies.Clear();
+        enemies.Clear();
+    }
+
     void Update() {
         if (combatOver) {
-            return;
+            Debug.Log("RESTARTING COMBAT");
+            ResetBattle();
+            CreateBattle();
+            combatOver = false;
+            OnRoundOver();
         }
         
         if (autoTurn) {
@@ -88,29 +108,30 @@ public class CombatManager : MonoBehaviour {
     }
     
     public void PerformAttack(Character attacker) {
-        if (attacker is Ally) {
-            PerformAttack(attacker, GetFrontEnemy());
-        }
-        else {
-            PerformAttack(attacker, GetFrontAlly());
+        //  Perform active abilities
+        CheckAbilities(attacker, AbilityType.Active);
+        
+        //  Default attack
+        switch (attacker) {
+            case Ally _:
+                PerformAttack(attacker, GetFrontEnemy());
+                break;
+            case Enemy _:
+                PerformAttack(attacker, GetFrontAlly());
+                break;
         }
     }
+    
+    private void CheckAbilities(Character character, AbilityType abilityType) {
+        character.CheckAbilities(abilityType);
+    }
 
-    public void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
-        if (defender.CanReact(true)) {
-            defender.Reaction.EnableTrigger(attacker);
-        }
-        
+    private void PerformAttack(Character attacker, Character defender, bool ignoreArmor = false) {
         Debug.Log($"ATTACK: Attacker {attacker} -> Defender {defender}", this);
-        defender.TakeDamage(attacker.Power, ignoreArmor);
+        defender.TakeDamage(attacker, attacker.Power, ignoreArmor);
         
-        if (defender.CanReact(false)) {
-            defender.Reaction.EnableTrigger(attacker);
-        }
-
-        if (defender.Reaction != null) {
-            defender.Reaction.DisableTrigger();
-        }
+        //  Perform reactive abilities
+        CheckAbilities(defender, AbilityType.Reactive);
     }
     
     public void AddAlly(int pos, Ally allyToAdd) {
@@ -119,6 +140,7 @@ public class CombatManager : MonoBehaviour {
         Ally ally = Instantiate(allyToAdd, allyPositions[pos - 1].transform.position, Quaternion.identity);
         
         SetupAlly(ally);
+        ally.Name += " " + pos;
 
         allies.Add(pos, ally);
 
@@ -127,22 +149,22 @@ public class CombatManager : MonoBehaviour {
 
     public void RemoveAlly(Ally ally) {
         ally.HealthChangedEvent -= OnHealthChanged;
-        ally.Die();
+        ally.Destroy();
     }
     
-    private static void SetupAlly(Ally ally) {
+    private void SetupAlly(Ally ally) {
         ally.Setup();
         
         //  FIXME
-        ally.RandomizeStats();
+        // ally.RandomizeStats();
 
-        Human human = ally.gameObject.AddComponent<Human>();
-        human.Setup();
-        ally.SetRace(human);
-        
-        Warrior warrior = ally.gameObject.AddComponent<Warrior>();
-        warrior.Setup();
-        ally.SetClass(warrior);
+        // Human human = ally.gameObject.AddComponent<Human>();
+        // human.Setup();
+        // ally.SetRace(human);
+        //
+        // Warrior warrior = ally.gameObject.AddComponent<Warrior>();
+        // warrior.Setup();
+        // ally.SetClass(warrior);
     }
     
     public void AddEnemy(int pos, Enemy enemyToAdd) {
@@ -151,6 +173,7 @@ public class CombatManager : MonoBehaviour {
         Enemy enemy = Instantiate(enemyToAdd, enemyPositions[pos - 1].transform.position, Quaternion.identity); 
         
         SetupEnemy(enemy);
+        enemy.Name += " " + pos;
         
         enemies.Add(pos, enemy);
 
@@ -159,14 +182,14 @@ public class CombatManager : MonoBehaviour {
     
     public void RemoveEnemy(Enemy enemy) {
         enemy.HealthChangedEvent -= OnHealthChanged;
-        enemy.Die();
+        enemy.Destroy();
     }
     
-    private static void SetupEnemy(Enemy enemy) {
+    private void SetupEnemy(Enemy enemy) {
         enemy.Setup();
         
         //  FIXME
-        enemy.RandomizeStats();
+        // enemy.RandomizeStats();
     }
     
     private void OnHealthChanged(object sender, EventArgs e) {
@@ -259,6 +282,8 @@ public class CombatManager : MonoBehaviour {
                 
                 RemoveAlly(ally.Value);
             }
+            
+            ally.Value.AfterTurn();
         }
 
         foreach (var ally in alliesToRemove) {
@@ -272,6 +297,8 @@ public class CombatManager : MonoBehaviour {
                 
                 RemoveEnemy(enemy.Value);
             }
+            
+            enemy.Value.AfterTurn();
         }
         
         foreach (var enemy in enemiesToRemove) {
@@ -299,10 +326,9 @@ public class CombatManager : MonoBehaviour {
         }
     }
 
-    private Ally GetAlly(int position) {
+    public Ally GetAlly(int position) {
         bool allyForPosition = allies.TryGetValue(position, out Ally character);
         if (allyForPosition) {
-            Debug.Log("Active Ally: " + character);
             return character;
         }
 
@@ -311,10 +337,9 @@ public class CombatManager : MonoBehaviour {
         return null;
     }
     
-    private Enemy GetEnemy(int position) {
+    public Enemy GetEnemy(int position) {
         bool enemyForPosition = enemies.TryGetValue(position, out Enemy character);
         if (enemyForPosition) {
-            Debug.Log("Active Enemy: " + character);
             return character;
         }
 

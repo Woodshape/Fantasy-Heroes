@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Data.Races {
     public abstract class Race : MonoBehaviour {
         public string Name;
+        public string Description;
 
         protected Ally character;
 

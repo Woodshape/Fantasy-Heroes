@@ -8,19 +8,24 @@ namespace Data.Classes {
         public override void Setup() {
             base.Setup();
 
-            Debug.Log("I AM A MIGHTY WARRIOR!!!", this);
-
             Name = "Warrior";
+            Description = "I AM A MIGHTY WARRIOR!!!";
+            
+            Debug.Log($"{Name}: {Description}", this);
         }
-    
-        public override bool BeforeAttack() {
-            return true;
+        
+        public override string GetDescription() {
+            return "Deals 1 damage to enemy on being hurt.";
+        }
+
+        public override TriggerType GetTriggerType() {
+            return TriggerType.OnHurt;
         }
 
         public override void EnableTrigger(Character trigger) {
-            Debug.Log("REVENGE", this);
+            Debug.Log(GetDescription(), this);
         
-            trigger.TakeDamage(1, true);
+            trigger.TakeDamage(character,1, true);
         }
         
         public override void DisableTrigger() { }

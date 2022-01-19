@@ -257,8 +257,8 @@ MonoBehaviour:
   - {fileID: 7379899086927879277, guid: a9bb51a9ad07550479e58d39194cc9a3, type: 3}
   - {fileID: 7379899086927879277, guid: a9bb51a9ad07550479e58d39194cc9a3, type: 3}
   startingEnemies:
-  - {fileID: 4090067081677153499, guid: 5d41291c4e302784b819f63f2751caad, type: 3}
-  - {fileID: 4090067081677153499, guid: 5d41291c4e302784b819f63f2751caad, type: 3}
+  - {fileID: 2126747589752870377, guid: e402234f3d479924fa2d8dfe26ac804a, type: 3}
+  - {fileID: 2126747589752870377, guid: e402234f3d479924fa2d8dfe26ac804a, type: 3}
   allyPositions:
   - {fileID: 521183246}
   - {fileID: 636774999}
@@ -270,7 +270,7 @@ MonoBehaviour:
   - {fileID: 1908318972}
   - {fileID: 876813299}
   positionCounter: 0
-  turnTime: 2
+  turnTime: 5
   autoTurn: 1
 --- !u!4 &479990874
 Transform:
