@@ -9,11 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d3b25dd62a141b293dd7654baac1872, type: 3}
-  m_Name: Bash
+  m_Script: {fileID: 11500000, guid: 43142f04e4304a97a6935fa4df164a00, type: 3}
+  m_Name: AllTarget
   m_EditorClassIdentifier: 
-  Type: 0
-  targetStrategy: {fileID: 11400000, guid: 6f55ebea609583d4ead5d46905594666, type: 2}
-  triggerStrategy: {fileID: 0}
-  Damage: 1
-  IgnoreArmor: 1

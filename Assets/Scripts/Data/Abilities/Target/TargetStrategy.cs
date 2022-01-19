@@ -6,5 +6,5 @@ using Data.Abilities;
 using UnityEngine;
 
 public abstract class TargetStrategy : ScriptableObject {
-    public abstract void Target(Character user, FilterStrategy filter, Action<IEnumerable<Character>> finished);
+    public abstract List<Character> Target(Character user);
 }

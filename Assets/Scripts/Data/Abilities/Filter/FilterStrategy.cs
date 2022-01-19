@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Data.Abilities {
     public abstract class FilterStrategy : ScriptableObject {

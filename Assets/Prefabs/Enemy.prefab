@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1213936906482822848}
   m_Layer: 0
   m_Name: Sprite
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4484420058467165849}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135,6 +135,7 @@ MonoBehaviour:
   DamagePopup: {fileID: 5993777662222586322, guid: a747bec1956ccd54f80cf98ae5cd9aa5, type: 3}
   Buffs: []
   Conditions: []
+  Abilities: []
 --- !u!1001 &8621124563920840565
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -229,6 +230,10 @@ PrefabInstance:
     - target: {fileID: 7364154286818098778, guid: d23c3dfef555285409d7191c0fb4b4b7, type: 3}
       propertyPath: m_Name
       value: Information
+      objectReference: {fileID: 0}
+    - target: {fileID: 7364154286818098778, guid: d23c3dfef555285409d7191c0fb4b4b7, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 7364154286818098779, guid: d23c3dfef555285409d7191c0fb4b4b7, type: 3}
       propertyPath: m_VerticalAlignment

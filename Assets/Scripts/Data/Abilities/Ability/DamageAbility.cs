@@ -8,7 +8,7 @@ namespace Data {
     public class DamageAbility : Ability {
         public int Damage;
         public bool IgnoreArmor;
-        
+
         protected override void Use(IEnumerable<Character> targets) {
             Debug.Log(user + " using " + this);
             foreach (var target in targets) {

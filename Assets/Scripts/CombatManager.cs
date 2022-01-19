@@ -153,7 +153,7 @@ public class CombatManager : MonoBehaviour {
 
     public void RemoveAlly(Ally ally) {
         ally.HealthChangedEvent -= OnHealthChanged;
-        ally.Die();
+        ally.Destroy();
     }
     
     private void SetupAlly(Ally ally) {
@@ -188,7 +188,7 @@ public class CombatManager : MonoBehaviour {
     
     public void RemoveEnemy(Enemy enemy) {
         enemy.HealthChangedEvent -= OnHealthChanged;
-        enemy.Die();
+        enemy.Destroy();
     }
     
     private void SetupEnemy(Enemy enemy) {
@@ -328,10 +328,9 @@ public class CombatManager : MonoBehaviour {
         }
     }
 
-    private Ally GetAlly(int position) {
+    public Ally GetAlly(int position) {
         bool allyForPosition = allies.TryGetValue(position, out Ally character);
         if (allyForPosition) {
-            Debug.Log("Active Ally: " + character);
             return character;
         }
 
@@ -340,10 +339,9 @@ public class CombatManager : MonoBehaviour {
         return null;
     }
     
-    private Enemy GetEnemy(int position) {
+    public Enemy GetEnemy(int position) {
         bool enemyForPosition = enemies.TryGetValue(position, out Enemy character);
         if (enemyForPosition) {
-            Debug.Log("Active Enemy: " + character);
             return character;
         }
 
