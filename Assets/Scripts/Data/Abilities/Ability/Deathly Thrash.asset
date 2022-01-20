@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d3b25dd62a141b293dd7654baac1872, type: 3}
-  m_Name: Bash
+  m_Name: Deathly Thrash
   m_EditorClassIdentifier: 
-  Name: Bash
-  Description: Deals 1 damage to enemy.
-  Type: 0
-  targetStrategy: {fileID: 11400000, guid: 6f55ebea609583d4ead5d46905594666, type: 2}
-  filterStrategy: {fileID: 11400000, guid: 6938980aa4022354092f331bcc82ccd7, type: 2}
-  triggerStrategy: {fileID: 0}
+  Name: Deathly Revenge
+  Description: Deals 1 damage to attacker on death.
+  Type: 1
+  targetStrategy: {fileID: 11400000, guid: 6fbd1d0483b1f6d4cb8b2d853317710e, type: 2}
+  filterStrategy: {fileID: 0}
+  triggerStrategy: {fileID: 11400000, guid: d01193e9889f2964a9a6d05f4de2b405, type: 2}
   Damage: 1
   IgnoreArmor: 1

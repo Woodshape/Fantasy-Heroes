@@ -19,8 +19,8 @@ public class CombatManager : MonoBehaviour {
     public List<GameObject> allyPositions = new List<GameObject>();
     public List<GameObject> enemyPositions = new List<GameObject>();
     
-    private Dictionary<int, Ally> allies = new Dictionary<int, Ally>();
-    private Dictionary<int, Enemy> enemies = new Dictionary<int, Enemy>();
+    private SortedDictionary<int, Ally> allies = new SortedDictionary<int, Ally>();
+    private SortedDictionary<int, Enemy> enemies = new SortedDictionary<int, Enemy>();
     
     [SerializeField]
     // private int positions = 6;
@@ -191,7 +191,7 @@ public class CombatManager : MonoBehaviour {
         //  FIXME
         // enemy.RandomizeStats();
     }
-    
+
     private void OnHealthChanged(object sender, EventArgs e) {
         Character character = (Character) sender;
         Debug.Log($"Health changed for {character.Name}: {character.Health}");
@@ -199,8 +199,8 @@ public class CombatManager : MonoBehaviour {
 
     public Ally GetFrontAlly() {
         if (allies.Count > 0) {
-            var sorted = allies.OrderBy(kvp => kvp.Key).ToList();
-            return sorted[0].Value;
+            // var sorted = allies.OrderBy(kvp => kvp.Key).ToList();
+            return allies.ElementAt(0).Value;
         }
 
         Debug.LogWarning("No allies");
@@ -209,8 +209,8 @@ public class CombatManager : MonoBehaviour {
     
     public Enemy GetFrontEnemy() {
         if (enemies.Count > 0) {
-            var sorted = enemies.OrderBy(kvp => kvp.Key).ToList();
-            return sorted[0].Value;
+            // var sorted = enemies.OrderBy(kvp => kvp.Key).ToList();
+            return enemies.ElementAt(0).Value;
         }
         
         Debug.LogWarning("No enemies");

@@ -101,7 +101,7 @@ namespace Data {
             }
             
             DamagePopup damagePopup = Instantiate(DamagePopup, transform.position, Quaternion.identity);
-            damagePopup.Setup(damage);
+            damagePopup.Setup(damage, DamagePopup.TextType.Damage);
 
             OnHealthChanged();
         }
